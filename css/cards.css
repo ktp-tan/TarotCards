@@ -8,28 +8,20 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 16px;
+  gap: 12px;
   max-width: 1000px;
   margin: 0 auto;
-  perspective: 1200px; /* Essential for 3D flip */
+  perspective: 1200px;
   padding: 40px 20px;
-}
-
-/* On desktop, create a fanned layout */
-@media (min-width: 769px) {
-  .deck-container {
-    height: 300px;
-    align-items: center;
-    position: relative;
-    gap: 0;
-  }
 }
 
 /* ── The Card ──────────────────────────────────────────── */
 
 .tarot-card {
-  width: 90px;
-  height: 150px;
+  width: calc(100% / 10 - 12px); /* 10 columns roughly */
+  min-width: 60px;
+  max-width: 90px;
+  aspect-ratio: 2/3.2;
   position: relative;
   cursor: pointer;
   transform-style: preserve-3d;
@@ -39,22 +31,6 @@
   z-index: 1;
   /* Entrance animation */
   animation: dealCard 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
-}
-
-@media (min-width: 769px) {
-  .tarot-card {
-    width: 120px;
-    height: 200px;
-    position: absolute;
-    left: calc(50% - 60px);
-    transform-origin: bottom center;
-  }
-  
-  /* Fan the cards out dynamically using nth-child */
-  .tarot-card:nth-child(n) {
-    /* We'll use JS to set explicit positions if needed, but CSS variables are cleaner. 
-       For a full 78 card deck, a grid is often better, but let's do a curved row of overlapping cards. */
-  }
 }
 
 /* Disabled state when a card is selected */
@@ -261,10 +237,14 @@
 /* ── Mobile Tweaks ─────────────────────────────────────── */
 
 @media (max-width: 768px) {
+  .deck-container {
+    gap: 8px;
+    padding: 20px 10px;
+  }
+  
   .tarot-card {
-    width: 28%; /* Roughly 3 columns */
-    height: auto;
-    aspect-ratio: 2/3.2;
+    width: calc(100% / 6 - 8px); /* 6 columns roughly */
+    min-width: 45px;
   }
   
   .card-face-symbol {
@@ -272,6 +252,6 @@
   }
   
   .card-face-name {
-    font-size: 0.7rem;
+    font-size: 0.6rem;
   }
 }
