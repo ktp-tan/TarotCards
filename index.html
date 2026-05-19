@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mystic AI Tarot | Discover Your Path</title>
+  <meta name="description" content="A responsive, AI-powered Tarot reading application using traditional Rider-Waite meanings.">
+  
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/cards.css">
+  <link rel="stylesheet" href="css/animations.css">
+</head>
+<body>
+  <!-- Ambient Effects -->
+  <div id="particles"></div>
+
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="app-logo">
+        <span class="app-logo-icon">🌟</span>
+        <h1>Mystic AI Tarot</h1>
+      </div>
+      <button id="settings-btn" class="settings-btn" aria-label="Settings" title="API Settings">⚙️</button>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="app-main">
+      
+      <!-- 1. Welcome Screen -->
+      <section id="welcome-screen" class="screen welcome-screen">
+        <div class="welcome-content">
+          <div class="welcome-icon">🔮</div>
+          <h2 class="welcome-title">Seek the Wisdom of the Cards</h2>
+          <p class="welcome-subtitle">Ask your question to the universe. Our AI, trained on traditional Rider-Waite wisdom, will interpret the cards you draw.</p>
+          
+          <form id="question-form" class="question-form">
+            <div class="input-wrapper">
+              <input type="text" id="question-input" class="question-input" 
+                     placeholder="E.g., What should I focus on today? or Will I get the job?" 
+                     required autocomplete="off">
+            </div>
+            <button type="submit" class="submit-btn">Consult the Tarot</button>
+          </form>
+        </div>
+      </section>
+
+      <!-- 2. Card Selection Screen -->
+      <section id="selection-screen" class="screen selection-screen">
+        <div class="selection-header">
+          <div id="question-display" class="selection-question"></div>
+          <h2 id="selection-title" class="selection-title">Choose Your Card</h2>
+          <p id="selection-subtitle" class="selection-subtitle">Trust your intuition. Let your hand be drawn to the card that calls to you.</p>
+        </div>
+        
+        <div id="deck-container" class="deck-container">
+          <!-- Cards injected via JS -->
+        </div>
+      </section>
+
+      <!-- 3. Reading Screen -->
+      <section id="reading-screen" class="screen reading-screen">
+        
+        <!-- Main Card Reading -->
+        <div class="reading-section">
+          <div class="reading-section-label">Your Drawn Card</div>
+          <div class="reading-card-display">
+            <div id="card-symbol" class="card-display-symbol">🌟</div>
+            <div class="card-display-info">
+              <div id="card-arcana" class="card-display-arcana">Major Arcana</div>
+              <h3 id="card-name" class="card-display-name">The Fool</h3>
+              <div id="card-orientation" class="orientation-badge">Upright</div>
+              <div id="card-keywords" class="card-display-keywords">New beginnings • Innocence</div>
+            </div>
+          </div>
+          
+          <div class="reading-text-container">
+            <div id="reading-text" class="reading-text"></div>
+            <div id="reading-loader" class="reading-loader">
+              <div class="loader-dot"></div>
+              <div class="loader-dot"></div>
+              <div class="loader-dot"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Clarifying Card Section (Initially Hidden) -->
+        <div id="clarify-section" class="clarify-section">
+          <div class="clarify-divider">
+            <div class="clarify-divider-text">Deeper Insight</div>
+          </div>
+          <div class="reading-section-label">Clarifying Card</div>
+          <div class="reading-card-display">
+            <div id="clarify-card-symbol" class="card-display-symbol">🌟</div>
+            <div class="card-display-info">
+              <div id="clarify-card-arcana" class="card-display-arcana">Major Arcana</div>
+              <h3 id="clarify-card-name" class="card-display-name">The Magician</h3>
+              <div id="clarify-card-orientation" class="orientation-badge">Upright</div>
+              <div id="clarify-card-keywords" class="card-display-keywords">Manifestation • Power</div>
+            </div>
+          </div>
+          
+          <div class="reading-text-container">
+            <div id="clarify-reading-text" class="reading-text"></div>
+            <div id="clarify-reading-loader" class="reading-loader">
+              <div class="loader-dot"></div>
+              <div class="loader-dot"></div>
+              <div class="loader-dot"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="reading-actions">
+          <button id="clarify-btn" class="action-btn clarify-btn">Draw Clarifying Card</button>
+          <button id="new-reading-btn" class="action-btn new-reading-btn">Start New Reading</button>
+        </div>
+
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p>Powered by AI • Rider-Waite Tradition</p>
+    </footer>
+  </div>
+
+  <!-- Settings Modal -->
+  <div id="settings-modal" class="settings-modal">
+    <div class="settings-panel">
+      <button id="settings-close" class="settings-close" aria-label="Close Settings">×</button>
+      <h2>API Settings</h2>
+      <p>Enter your OpenRouter API key to power the AI readings. Your key is stored locally in your browser and never sent to our servers.</p>
+      
+      <div class="form-group">
+        <label for="api-key-input">OpenRouter API Key</label>
+        <input type="password" id="api-key-input" placeholder="sk-or-v1-..." autocomplete="off">
+      </div>
+      
+      <div class="form-group">
+        <label for="model-select">AI Model</label>
+        <select id="model-select">
+          <option value="google/gemini-2.0-flash-001">Gemini 2.0 Flash (Fast & Smart)</option>
+          <option value="openai/gpt-4o-mini">GPT-4o Mini</option>
+          <option value="anthropic/claude-3-haiku">Claude 3 Haiku</option>
+          <option value="meta-llama/llama-3-8b-instruct">Llama 3 8B</option>
+        </select>
+      </div>
+      
+      <button id="save-settings-btn" class="save-settings-btn">Save Settings</button>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/cards.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

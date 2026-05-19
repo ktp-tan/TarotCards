@@ -1,0 +1,277 @@
+/* ============================================================
+   CARDS.CSS — Deck Layout & Card Flip Animations
+   ============================================================ */
+
+/* ── Deck Container ────────────────────────────────────── */
+
+.deck-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 16px;
+  max-width: 1000px;
+  margin: 0 auto;
+  perspective: 1200px; /* Essential for 3D flip */
+  padding: 40px 20px;
+}
+
+/* On desktop, create a fanned layout */
+@media (min-width: 769px) {
+  .deck-container {
+    height: 300px;
+    align-items: center;
+    position: relative;
+    gap: 0;
+  }
+}
+
+/* ── The Card ──────────────────────────────────────────── */
+
+.tarot-card {
+  width: 90px;
+  height: 150px;
+  position: relative;
+  cursor: pointer;
+  transform-style: preserve-3d;
+  transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), 
+              opacity 0.4s ease, 
+              box-shadow 0.4s ease;
+  z-index: 1;
+  /* Entrance animation */
+  animation: dealCard 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+}
+
+@media (min-width: 769px) {
+  .tarot-card {
+    width: 120px;
+    height: 200px;
+    position: absolute;
+    left: calc(50% - 60px);
+    transform-origin: bottom center;
+  }
+  
+  /* Fan the cards out dynamically using nth-child */
+  .tarot-card:nth-child(n) {
+    /* We'll use JS to set explicit positions if needed, but CSS variables are cleaner. 
+       For a full 78 card deck, a grid is often better, but let's do a curved row of overlapping cards. */
+  }
+}
+
+/* Disabled state when a card is selected */
+.tarot-card.disabled {
+  opacity: 0.3;
+  pointer-events: none;
+  filter: grayscale(80%);
+}
+
+.tarot-card:hover:not(.disabled):not(.flipped) {
+  transform: translateY(-20px) scale(1.05) !important;
+  z-index: 50;
+  box-shadow: var(--shadow-lift);
+}
+
+.tarot-card.flipped {
+  transform: rotateY(180deg) scale(1.1) !important;
+  z-index: 100;
+  box-shadow: 0 0 40px rgba(212, 165, 116, 0.4);
+}
+
+@keyframes dealCard {
+  from {
+    opacity: 0;
+    transform: translateY(-100px) scale(0.8) rotateY(90deg);
+  }
+}
+
+/* ── Card Inner Wrapper ────────────────────────────────── */
+
+.card-inner {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  border-radius: var(--radius-sm);
+}
+
+/* ── Card Faces (Front & Back) ─────────────────────────── */
+
+.card-front, .card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+}
+
+/* ── Card Back (The hidden side) ───────────────────────── */
+
+.card-back {
+  background: linear-gradient(135deg, #1a0a2e, #2d1445);
+  border: 2px solid var(--gold-dark);
+}
+
+.card-back-design {
+  width: 100%;
+  height: 100%;
+  padding: 8px;
+  background: 
+    linear-gradient(45deg, transparent 48%, var(--gold-dark) 49%, var(--gold-dark) 51%, transparent 52%),
+    linear-gradient(-45deg, transparent 48%, var(--gold-dark) 49%, var(--gold-dark) 51%, transparent 52%);
+  background-size: 30px 30px;
+  opacity: 0.6;
+}
+
+.card-back-border {
+  width: 100%;
+  height: 100%;
+  border: 1px solid var(--gold);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(26, 10, 46, 0.85);
+}
+
+.card-back-pattern {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.card-back-star {
+  color: var(--gold-light);
+  font-size: 1.2rem;
+  filter: drop-shadow(0 0 5px var(--gold));
+}
+
+.card-back-circle {
+  width: 40px;
+  height: 40px;
+  border: 2px solid var(--gold);
+  border-radius: 50%;
+  position: relative;
+}
+
+.card-back-circle::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 24px;
+  height: 24px;
+  border: 1px solid var(--gold-light);
+  border-radius: 50%;
+}
+
+/* ── Card Front (The revealed side) ────────────────────── */
+
+.card-front {
+  background: var(--text-primary);
+  transform: rotateY(180deg); /* Crucial for backface-visibility to work on the flipped side */
+  border: 2px solid var(--gold-light);
+}
+
+.card-front-content {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: transform 0.8s ease; /* For reversed cards */
+}
+
+/* When a card is drawn "Reversed", we rotate the content container */
+.card-front-content.reversed {
+  transform: rotate(180deg);
+}
+
+.card-face-header, .card-face-footer {
+  padding: 6px 0;
+  text-align: center;
+  color: #fff;
+  font-family: var(--font-heading);
+}
+
+.card-face-header {
+  border-bottom: 2px solid rgba(0,0,0,0.2);
+}
+
+.card-face-footer {
+  border-top: 2px solid rgba(0,0,0,0.2);
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.card-face-number {
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.card-face-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  background: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23d4a574' fill-opacity='0.1' fill-rule='evenodd'%3E%3Ccircle cx='3' cy='3' r='3'/%3E%3Ccircle cx='13' cy='13' r='3'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+.card-face-symbol {
+  font-size: 2.5rem;
+  margin-bottom: 8px;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+}
+
+.card-face-name {
+  font-family: var(--font-heading);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #2c1b18;
+  text-align: center;
+  line-height: 1.2;
+}
+
+.card-face-orientation {
+  font-size: 0.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-top: 6px;
+  padding: 2px 6px;
+  border-radius: 10px;
+}
+
+.card-face-orientation.upright {
+  color: var(--emerald);
+  background: rgba(16, 185, 129, 0.1);
+}
+
+.card-face-orientation.reversed {
+  color: var(--rose);
+  background: rgba(244, 63, 94, 0.1);
+}
+
+/* ── Mobile Tweaks ─────────────────────────────────────── */
+
+@media (max-width: 768px) {
+  .tarot-card {
+    width: 28%; /* Roughly 3 columns */
+    height: auto;
+    aspect-ratio: 2/3.2;
+  }
+  
+  .card-face-symbol {
+    font-size: 1.8rem;
+  }
+  
+  .card-face-name {
+    font-size: 0.7rem;
+  }
+}
