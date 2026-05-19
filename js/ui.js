@@ -123,30 +123,33 @@ const UI = {
 
   // ── Card Flip & Reveal ────────────────────────────────
 
+  getCardImagePath(card) {
+    let filename = '';
+    if (card.arcana === 'major') {
+      filename = `maj${card.number.toString().padStart(2, '0')}.jpg`;
+    } else {
+      let suitPrefix = card.suit === 'pentacles' ? 'pents' : card.suit;
+      filename = `${suitPrefix}${card.number.toString().padStart(2, '0')}.jpg`;
+    }
+    return `assets/images/${filename}`;
+  },
+
   flipCard(cardElement, cardData, orientation) {
     const front = cardElement.querySelector(".card-front-content");
-    const suitInfo = cardData.suit ? SUIT_INFO[cardData.suit] : null;
-    const gradient = suitInfo ? suitInfo.gradient : MAJOR_ARCANA_GRADIENT;
-    const suitLabel = cardData.arcana === "major"
-      ? `Major Arcana • ${cardData.number}`
-      : `${capitalize(cardData.suit)} • ${suitInfo.element}`;
-
-    front.innerHTML = `
-      <div class="card-face-header" style="background: ${gradient}">
-        <span class="card-face-number">${getRomanNumeral(cardData)}</span>
-      </div>
-      <div class="card-face-body">
-        <div class="card-face-symbol">${cardData.symbol}</div>
-        <div class="card-face-name">${cardData.name}</div>
-        <div class="card-face-orientation ${orientation.toLowerCase()}">${orientation}</div>
-      </div>
-      <div class="card-face-footer" style="background: ${gradient}">
-        <span class="card-face-suit">${suitLabel}</span>
-      </div>
-    `;
-
+    const frontSide = cardElement.querySelector(".card-front");
+    const imagePath = this.getCardImagePath(cardData);
+    
+    // Set the image as background
+    frontSide.style.backgroundImage = `url('${imagePath}')`;
+    frontSide.style.backgroundSize = "cover";
+    frontSide.style.backgroundPosition = "center";
+    
+    // Clear out the previous HTML content
+    front.innerHTML = "";
+    
+    // If reversed, rotate the background image (the .card-front face)
     if (orientation === "Reversed") {
-      front.classList.add("reversed");
+      frontSide.style.transform = "rotateY(180deg) rotateZ(180deg)";
     }
 
     cardElement.classList.add("flipped", "selected");
@@ -170,11 +173,11 @@ const UI = {
       ? "Major Arcana"
       : `${capitalize(cardData.suit)}`;
 
-    this.els.cardSymbol.textContent = cardData.symbol;
-    this.els.cardSymbol.style.background = gradient;
-    this.els.cardSymbol.style.webkitBackgroundClip = "text";
-    this.els.cardSymbol.style.webkitTextFillColor = "transparent";
-    this.els.cardSymbol.style.backgroundClip = "text";
+    const imagePath = this.getCardImagePath(cardData);
+    this.els.cardSymbol.innerHTML = `<img src="${imagePath}" class="card-display-image ${orientation.toLowerCase()}" alt="${cardData.name}">`;
+    this.els.cardSymbol.style.background = "none";
+    this.els.cardSymbol.style.webkitTextFillColor = "initial";
+    this.els.cardSymbol.style.margin = "0";
     this.els.cardName.textContent = cardData.name;
     this.els.cardOrientation.textContent = orientation;
     this.els.cardOrientation.className = `orientation-badge ${orientation.toLowerCase()}`;
@@ -216,11 +219,11 @@ const UI = {
       ? "Major Arcana"
       : `${capitalize(cardData.suit)}`;
 
-    this.els.clarifyCardSymbol.textContent = cardData.symbol;
-    this.els.clarifyCardSymbol.style.background = gradient;
-    this.els.clarifyCardSymbol.style.webkitBackgroundClip = "text";
-    this.els.clarifyCardSymbol.style.webkitTextFillColor = "transparent";
-    this.els.clarifyCardSymbol.style.backgroundClip = "text";
+    const imagePath = this.getCardImagePath(cardData);
+    this.els.clarifyCardSymbol.innerHTML = `<img src="${imagePath}" class="card-display-image ${orientation.toLowerCase()}" alt="${cardData.name}">`;
+    this.els.clarifyCardSymbol.style.background = "none";
+    this.els.clarifyCardSymbol.style.webkitTextFillColor = "initial";
+    this.els.clarifyCardSymbol.style.margin = "0";
     this.els.clarifyCardName.textContent = cardData.name;
     this.els.clarifyCardOrientation.textContent = orientation;
     this.els.clarifyCardOrientation.className = `orientation-badge ${orientation.toLowerCase()}`;
