@@ -57,7 +57,7 @@ async function streamCompletion(userPrompt, apiKey, model) {
       ],
       stream: true,
       temperature: 0.8,
-      max_tokens: 1024,
+      max_tokens: 2048,
     }),
   });
 
@@ -100,13 +100,20 @@ async function consumeStream(reader, onChunk) {
 
         try {
           const parsed = JSON.parse(data);
+          if (parsed.error) {
+            throw new Error(parsed.error.message || "OpenRouter streaming error");
+          }
           const delta = parsed.choices?.[0]?.delta?.content;
           if (delta) {
             fullText += delta;
             onChunk(delta, fullText);
           }
-        } catch (_) {
-          // skip unparseable chunks
+        } catch (err) {
+          if (err instanceof SyntaxError) {
+            // skip unparseable chunks
+          } else {
+            throw err; // propagate API errors to the UI
+          }
         }
       }
     }
